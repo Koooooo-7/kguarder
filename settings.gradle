@@ -1,0 +1,3 @@
+rootProject.name = 'kguarder'
+include('kguarder-core')
+include('kguarder-starter')

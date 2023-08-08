@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+}
+group = PROJECT_GROUP
+version = PROJECT_VERSION
+
+subprojects {
+    apply plugin: 'java-library'
+
+    group = PROJECT_GROUP
+    version = PROJECT_VERSION
+
+    repositories {
+        mavenCentral()
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+    dependencies {
+
+        implementation 'org.apache.commons:commons-lang3:3.12.0'
+        implementation 'org.springframework.boot:spring-boot-starter:2.7.14'
+
+        compileOnly 'org.projectlombok:lombok:1.18.26'
+        annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+}
