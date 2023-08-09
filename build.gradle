@@ -1,11 +1,16 @@
-plugins {
-    id 'java-library'
-}
 group = PROJECT_GROUP
 version = PROJECT_VERSION
 
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
 subprojects {
     apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
 
     group = PROJECT_GROUP
     version = PROJECT_VERSION
@@ -21,9 +26,48 @@ subprojects {
 
         implementation 'org.apache.commons:commons-lang3:3.12.0'
         implementation 'org.springframework.boot:spring-boot-starter:2.7.14'
+        implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
         compileOnly 'org.projectlombok:lombok:1.18.26'
         annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    }
+
+    tasks.named('jar') {
+        manifest {
+            attributes(
+                    'Implementation-Title': project.name,
+                    'Implementation-Version': project.version,
+                    'Built-Tool': "Gradle ${gradle.gradleVersion}",
+                    'Build-Jdk': "${System.properties['java.version']}",
+            )
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                pom {
+                    name = project.name
+                    description = 'A method based guarder for error-handling.'
+                    url = 'https://github.com/koooooo-7/kguarder'
+                    licenses {
+                        license {
+                            name = 'MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            name = 'Koy Zhuang'
+                            email = 'koy@ko8e24.top'
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            mavenLocal()
+        }
     }
 
     test {
