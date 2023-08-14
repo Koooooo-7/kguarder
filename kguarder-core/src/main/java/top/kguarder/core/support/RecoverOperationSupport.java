@@ -1,7 +1,5 @@
 package top.kguarder.core.support;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import top.kguarder.core.advisor.GuarderMethodInvoker;
 import top.kguarder.core.annotation.Recover;
@@ -163,7 +161,8 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         } catch (GuarderThrowableWrapper e) {
             resultWrapper.setThrowableWrapper(e);
         } catch (Exception e) {
-            resultWrapper.setThrowableWrapper(new GuarderThrowableWrapper(e, null));
+            // error out of scope
+            throw new RuntimeException(e);
         }
         return resultWrapper;
     }

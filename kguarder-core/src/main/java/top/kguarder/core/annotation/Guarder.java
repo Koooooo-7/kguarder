@@ -1,6 +1,7 @@
 package top.kguarder.core.annotation;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -11,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * - @Retry, provide retry options
  * - @Recover, provide the recover options
  * Usage:
- *     Guarder(retry = @Retry(retryTimes = 5, delay = 2, delayStrategy = Retry.DelayStrategy.MULTIPLIER),
+ * Guarder(retry = @Retry(retryTimes = 5, delay = 2, delayStrategy = Retry.DelayStrategy.MULTIPLIER),
  * failureCheckCustomizer = "MyChecker",
  * recover = @Recover(fallback = "myFallback"))
  *
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
+@Inherited
 public @interface Guarder {
 
     /*

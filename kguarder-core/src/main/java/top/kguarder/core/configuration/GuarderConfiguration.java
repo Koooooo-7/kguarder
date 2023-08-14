@@ -1,6 +1,8 @@
 package top.kguarder.core.configuration;
 
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import top.kguarder.core.advisor.GuarderAdvisor;
 import top.kguarder.core.advisor.GuarderInterceptor;
@@ -68,6 +70,14 @@ public class GuarderConfiguration {
         guarderExecutor.initialize();
         return guarderExecutor;
     }
+    @Bean
+    @ConditionalOnMissingBean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator = new DefaultAdvisorAutoProxyCreator();
+        defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
+        return defaultAdvisorAutoProxyCreator;
+    }
+
 
 
 }
