@@ -11,7 +11,7 @@ public class GuarderThrowableWrapper extends RuntimeException {
     public GuarderThrowableWrapper(Throwable original, MethodInvocation invocation) {
         super(original.getMessage(), original);
         this.original = original;
-        this.invocation = invocation;
+        this.invocation = new GuarderMethodInvoker.MethodInvocationWrapper(invocation);
     }
 
     public Throwable getOriginal() {
@@ -19,6 +19,6 @@ public class GuarderThrowableWrapper extends RuntimeException {
     }
 
     public MethodInvocation getInvocation() {
-        return new GuarderMethodInvoker.MethodInvocationWrapper(invocation);
+        return invocation;
     }
 }
