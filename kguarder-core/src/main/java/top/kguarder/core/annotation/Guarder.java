@@ -41,10 +41,10 @@ public @interface Guarder {
 
     String failureCheckCustomizer() default "";
 
-    // exception exclude
+    // exception exclude, will throw directly
     Class<? extends Exception>[] excludeEx() default {};
 
-    // exception include
+    // exception include, will swallow it into retry/recover
     Class<? extends Exception>[] includeEx() default Exception.class;
 
     // retry config

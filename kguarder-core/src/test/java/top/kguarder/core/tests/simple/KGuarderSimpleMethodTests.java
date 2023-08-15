@@ -26,7 +26,7 @@ public class KGuarderSimpleMethodTests {
     private MockSimpleFallbacker mockSimpleFallbacker;
 
     @Test
-    void shouldReturnResultAfterRetryOnce() {
+    void shouldReturnResultWhenRetryOnce() {
         final Long actual = mockSimpleCallService.returnSimpleCall();
         Assertions.assertEquals(200L, actual);
         verify(mockSimpleCallService, times(2)).returnSimpleCall();
@@ -34,10 +34,24 @@ public class KGuarderSimpleMethodTests {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldReturnFallbackResultAfterRetryFailed() {
+    void shouldReturnFallbackResultWhenRetryFailed() {
         final var actual = (List<String>) mockSimpleCallService.returnSimpleObjectRecoverCall();
         Assertions.assertEquals(3, actual.size());
         verify(mockSimpleCallService, times(4)).returnSimpleObjectRecoverCall();
+        verify(mockSimpleFallbacker, only()).fallback(any());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenCallMethod() {
+        Assertions.assertThrows(IllegalStateException.class, () -> mockSimpleCallService.throwExceptionMatchExcludeExCall());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldReturnFallbackResultWhenRetryFailedSinceTimeout() {
+        final var actual = (List<String>) mockSimpleCallService.returnSimpleObjectRecoverCallWithTimeout();
+        Assertions.assertEquals(3, actual.size());
+        verify(mockSimpleCallService, times(1)).returnSimpleObjectRecoverCallWithTimeout();
         verify(mockSimpleFallbacker, only()).fallback(any());
     }
 

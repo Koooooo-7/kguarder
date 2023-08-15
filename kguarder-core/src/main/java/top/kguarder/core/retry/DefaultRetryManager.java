@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DefaultRetryManager implements RetryManager {
 
-    public boolean failed(RetryContext context, ResultWrapper resultWrapper, FailureCustomChecker failureCustomChecker) {
+    public boolean failed(RetryContext context, ResultWrapper resultWrapper, FailureCustomChecker failureCustomChecker) throws Throwable {
         if (failureCustomChecker.failed(resultWrapper)) {
             return true;
         }
@@ -21,7 +21,7 @@ public class DefaultRetryManager implements RetryManager {
     }
 
     @Override
-    public boolean failed(RetryContext context, ResultWrapper resultWrapper) {
+    public boolean failed(RetryContext context, ResultWrapper resultWrapper) throws Throwable {
         final GuarderThrowableWrapper throwableWrapper = resultWrapper.getThrowableWrapper();
         if (Objects.isNull(throwableWrapper)) {
             return false;
@@ -34,7 +34,7 @@ public class DefaultRetryManager implements RetryManager {
 
         final boolean excludeEx = Arrays.stream(context.getExcludeEx()).anyMatch(ex -> ex.isAssignableFrom(original.getClass()));
         if (excludeEx) {
-            return false;
+            throw original;
         }
 
         final boolean includeEx = Arrays.stream(context.getIncludeEx()).anyMatch(ex -> ex.isAssignableFrom(original.getClass()));
@@ -47,7 +47,7 @@ public class DefaultRetryManager implements RetryManager {
     }
 
     @Override
-    public boolean canRetry(RetryContext context, ResultWrapper resultWrapper) {
+    public boolean canRetry(RetryContext context, ResultWrapper resultWrapper) throws Throwable {
         if (!failed(context, resultWrapper, context.getFailureCustomChecker())) {
             resultWrapper.setSuccess(true);
             return false;

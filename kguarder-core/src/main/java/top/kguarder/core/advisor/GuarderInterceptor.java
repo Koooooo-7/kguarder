@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 
 public class GuarderInterceptor extends RecoverOperationSupport implements MethodInterceptor {
     @Override
-    public Object invoke(@NonNull MethodInvocation invocation) {
+    public Object invoke(@NonNull MethodInvocation invocation) throws Throwable {
 
         parserGuarderContext(invocation.getMethod());
 
@@ -19,6 +19,9 @@ public class GuarderInterceptor extends RecoverOperationSupport implements Metho
                 throw new GuarderThrowableWrapper(e, invocation);
             }
         };
-        return doInvoke(guarderMethodInvoker);
+
+        return doInvoke(GuarderMethodInvokerContext.newCtx()
+                .guarderInvoker(guarderMethodInvoker)
+                .methodInvoker(new GuarderMethodInvoker.MethodInvocationWrapper(invocation)));
     }
 }

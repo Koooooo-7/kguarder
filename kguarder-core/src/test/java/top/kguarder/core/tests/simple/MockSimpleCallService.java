@@ -34,4 +34,35 @@ public class MockSimpleCallService {
         throw new IllegalStateException("Mock an Exception");
     }
 
+    @Guarder(
+            excludeEx = {IllegalStateException.class},
+            retry = @Retry(
+                    retryTimes = 3
+            ),
+            recover = @Recover(
+                    fallback = "mockSimpleFallbacker"
+            )
+
+    )
+    public Object throwExceptionMatchExcludeExCall() {
+        throw new IllegalStateException("Mock an Exception");
+    }
+
+    @Guarder(
+            timeout = 2L,
+            recover = @Recover(
+                    fallback = "mockSimpleFallbacker"
+            )
+
+    )
+    public Object returnSimpleObjectRecoverCallWithTimeout() {
+
+        try {
+            Thread.sleep(3_000L);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
 }

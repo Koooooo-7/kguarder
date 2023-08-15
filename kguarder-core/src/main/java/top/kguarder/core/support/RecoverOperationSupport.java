@@ -2,6 +2,7 @@ package top.kguarder.core.support;
 
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import top.kguarder.core.advisor.GuarderMethodInvoker;
+import top.kguarder.core.advisor.GuarderMethodInvokerContext;
 import top.kguarder.core.annotation.Recover;
 import top.kguarder.core.annotation.Guarder;
 import top.kguarder.core.annotation.Retry;
@@ -20,6 +21,7 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Method;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public abstract class RecoverOperationSupport implements BeanFactoryAware {
     private static final FailureCustomChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (ResultWrapper resultWrapper) -> false;
@@ -30,14 +32,13 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
     private RetryManager defaultRetryManager;
 
-    public Object doInvoke(GuarderMethodInvoker guarderMethodInvoker) {
-
+    public Object doInvoke(GuarderMethodInvokerContext guarderMethodInvokerContext) throws Throwable {
 
         ResultWrapper resultWrapper =
-                doRun(guarderMethodInvoker, this.guarderContext.getTimeout(), this.guarderContext.getTimeoutUnit());
+                doRun(guarderMethodInvokerContext, this.guarderContext.getTimeout(), this.guarderContext.getTimeoutUnit());
         // do retry?
         if (this.guarderContext.tryRetry()) {
-            resultWrapper = doRetry(guarderMethodInvoker, resultWrapper);
+            resultWrapper = doRetry(guarderMethodInvokerContext, resultWrapper);
         }
 
         // do recover?
@@ -112,7 +113,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         return BeanFactoryAnnotationUtils.qualifiedBeanOfType(this.beanFactory, expectedType, beanName);
     }
 
-    public ResultWrapper doRetry(GuarderMethodInvoker invoker, ResultWrapper firstCallResult) {
+    public ResultWrapper doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, ResultWrapper firstCallResult) throws Throwable {
         final RetryContext retryContext = this.guarderContext.getRetryContext();
         final RetryManager retryManager = retryContext.getRetryManager();
 
@@ -120,7 +121,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
         while (retryManager.canRetry(retryContext, resultWrapper)) {
             try {
-                resultWrapper = doRun(invoker, retryContext.getTimeout(), retryContext.getTimeoutUnit());
+                resultWrapper = doRun(guarderMethodInvokerContext, retryContext.getTimeout(), retryContext.getTimeoutUnit());
             } finally {
                 retryContext.incRetryTimes();
             }
@@ -139,7 +140,8 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         return recoveredResult;
     }
 
-    public ResultWrapper doRun(GuarderMethodInvoker methodInvoker, long timeout, TimeUnit timeUnit) {
+    public ResultWrapper doRun(GuarderMethodInvokerContext guarderMethodInvokerContext, long timeout, TimeUnit timeUnit) {
+        final GuarderMethodInvoker methodInvoker = guarderMethodInvokerContext.getGuarderMethodInvoker();
         ResultWrapper resultWrapper = new ResultWrapper();
         // straight run
         if (timeout == 0) {
@@ -147,7 +149,6 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
                 final Object result = methodInvoker.invoke();
                 resultWrapper.setResult(result);
             } catch (GuarderThrowableWrapper e) {
-                // error
                 resultWrapper.setThrowableWrapper(e);
             }
             return resultWrapper;
@@ -160,8 +161,10 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
             resultWrapper.setResult(result);
         } catch (GuarderThrowableWrapper e) {
             resultWrapper.setThrowableWrapper(e);
+        } catch (TimeoutException e) {
+            resultWrapper.setThrowableWrapper(new GuarderThrowableWrapper(e, guarderMethodInvokerContext.getOriginalMethodInvoker()));
         } catch (Exception e) {
-            // error out of scope
+            // error out of biz scope
             throw new RuntimeException(e);
         }
         return resultWrapper;

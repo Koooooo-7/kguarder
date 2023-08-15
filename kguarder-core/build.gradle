@@ -1,5 +1,4 @@
 dependencies {
-    testImplementation 'org.mockito:mockito-core:5.4.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.4.0'
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${SPRINGBOOT_VERSION}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${SPRINGBOOT_VERSION}"
 }

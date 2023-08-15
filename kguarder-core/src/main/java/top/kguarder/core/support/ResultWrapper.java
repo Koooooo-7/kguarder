@@ -27,7 +27,7 @@ public class ResultWrapper {
 
     protected Object getFinalResult() {
         if (isFailed()) {
-            throw new GuarderException("Guarder handle final failed, result is [" + getResult().orElse("") + "]",
+            throw new GuarderException("Guarder handle method finished, it is still failed, result is [" + getResult().orElse("") + "]",
                     throwableWrapper.getOriginal());
         }
         return result;
