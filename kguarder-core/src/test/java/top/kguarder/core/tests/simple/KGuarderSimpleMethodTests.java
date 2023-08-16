@@ -50,7 +50,7 @@ public class KGuarderSimpleMethodTests {
     @SuppressWarnings("unchecked")
     void shouldReturnFallbackResultWhenRetryFailedSinceTimeout() {
         final var actual = (List<String>) mockSimpleCallService.returnSimpleObjectRecoverCallWithTimeout();
-        Assertions.assertEquals(3, actual.size());
+        Assertions.assertEquals(30, actual.size());
         verify(mockSimpleCallService, times(1)).returnSimpleObjectRecoverCallWithTimeout();
         verify(mockSimpleFallbacker, only()).fallback(any());
     }

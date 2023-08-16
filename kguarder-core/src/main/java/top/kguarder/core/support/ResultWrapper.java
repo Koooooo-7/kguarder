@@ -15,6 +15,7 @@ public class ResultWrapper {
 
     private GuarderThrowableWrapper throwableWrapper;
 
+    @SuppressWarnings("unchecked")
     public <T> Optional<T> getResult() {
         return Optional.ofNullable((T) result);
     }
