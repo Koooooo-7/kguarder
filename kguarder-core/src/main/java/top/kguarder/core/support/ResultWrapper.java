@@ -15,12 +15,6 @@ public class ResultWrapper {
 
     private GuarderThrowableWrapper throwableWrapper;
 
-    public ResultWrapper() {
-    }
-
-    public ResultWrapper(Object result) {
-    }
-
     public <T> Optional<T> getResult() {
         return Optional.ofNullable((T) result);
     }

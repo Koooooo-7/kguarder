@@ -6,6 +6,7 @@ import top.kguarder.core.annotation.Retry;
 
 public class MockSimpleCallService {
 
+    // a simple flag to switch result after call twice
     private boolean firstExFlag = true;
 
     @Guarder(

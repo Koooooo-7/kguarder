@@ -6,7 +6,7 @@ import top.kguarder.core.advisor.GuarderMethodInvokerContext;
 import top.kguarder.core.annotation.Recover;
 import top.kguarder.core.annotation.Guarder;
 import top.kguarder.core.annotation.Retry;
-import top.kguarder.core.component.FailureCustomChecker;
+import top.kguarder.core.component.CustomFailureChecker;
 import top.kguarder.core.exception.GuarderThrowableWrapper;
 import top.kguarder.core.recover.Fallbacker;
 import top.kguarder.core.recover.RecoverContext;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class RecoverOperationSupport implements BeanFactoryAware {
-    private static final FailureCustomChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (ResultWrapper resultWrapper) -> false;
+    private static final CustomFailureChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (ResultWrapper resultWrapper) -> false;
     private ThreadPoolTaskExecutor guarderExecutor;
     public GuarderContext guarderContext;
 
@@ -63,15 +63,15 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         this.guarderContext.setTimeoutUnit(guarder.timeoutUnit());
 
         if (retry.retryTimes() > 0) {
-            FailureCustomChecker failureCustomChecker = EMPTY_CUSTOM_RESULT_FAILURE_CHECKER;
-            if (StringUtils.isNotEmpty(guarder.failureCheckCustomizer())) {
-                failureCustomChecker = getBean(guarder.failureCheckCustomizer(), FailureCustomChecker.class);
+            CustomFailureChecker customFailureChecker = EMPTY_CUSTOM_RESULT_FAILURE_CHECKER;
+            if (StringUtils.isNotEmpty(guarder.failureCustomChecker())) {
+                customFailureChecker = getBean(guarder.failureCustomChecker(), CustomFailureChecker.class);
             }
 
             RetryManager retryManager = defaultRetryManager;
 
-            if (StringUtils.isNotEmpty(guarder.failureCheckCustomizer())) {
-                failureCustomChecker = getBean(guarder.failureCheckCustomizer(), FailureCustomChecker.class);
+            if (StringUtils.isNotEmpty(guarder.failureCustomChecker())) {
+                customFailureChecker = getBean(guarder.failureCustomChecker(), CustomFailureChecker.class);
             }
 
             if (StringUtils.isNotEmpty(guarder.retry().retryManager())) {
@@ -85,7 +85,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
                     .excludeEx(guarder.excludeEx())
                     .retryTimes(retry.retryTimes())
                     .delay(retry.delay())
-                    .failureCustomChecker(failureCustomChecker)
+                    .customFailureChecker(customFailureChecker)
                     .delayTimeUnit(retry.delayTimeUnit())
                     .delayStrategy(retry.delayStrategy())
                     .retryManager(retryManager)

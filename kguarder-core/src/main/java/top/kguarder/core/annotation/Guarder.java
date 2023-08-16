@@ -31,15 +31,15 @@ public @interface Guarder {
 
     TimeUnit timeoutUnit() default TimeUnit.SECONDS;
 
-    /*
+    /**
      * Allow to customize what is failed result on current method call, which means it allows to
      * identify the method result on business failed, i.e.
      * A return result with failed with bizResultCode=50000 in payload after calling other service
      *
-     * @return the bean name which is the instance of {@link FailureCustomChecker}
+     * @return the bean name which is the instance of {@link  top.kguarder.core.component.CustomFailureChecker }
      */
 
-    String failureCheckCustomizer() default "";
+    String failureCustomChecker() default "";
 
     // exception exclude, will throw directly
     Class<? extends Exception>[] excludeEx() default {};

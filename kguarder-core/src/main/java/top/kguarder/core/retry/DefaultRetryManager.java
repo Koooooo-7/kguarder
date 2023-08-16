@@ -1,7 +1,7 @@
 package top.kguarder.core.retry;
 
 import top.kguarder.core.annotation.Retry;
-import top.kguarder.core.component.FailureCustomChecker;
+import top.kguarder.core.component.CustomFailureChecker;
 import top.kguarder.core.exception.GuarderThrowableWrapper;
 import top.kguarder.core.support.ResultWrapper;
 import top.kguarder.core.exception.GuarderException;
@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 public class DefaultRetryManager implements RetryManager {
 
-    public boolean failed(RetryContext context, ResultWrapper resultWrapper, FailureCustomChecker failureCustomChecker) throws Throwable {
-        if (failureCustomChecker.failed(resultWrapper)) {
+    public boolean failed(RetryContext context, ResultWrapper resultWrapper, CustomFailureChecker customFailureChecker) throws Throwable {
+        if (customFailureChecker.failed(resultWrapper)) {
             return true;
         }
 
@@ -48,7 +48,7 @@ public class DefaultRetryManager implements RetryManager {
 
     @Override
     public boolean canRetry(RetryContext context, ResultWrapper resultWrapper) throws Throwable {
-        if (!failed(context, resultWrapper, context.getFailureCustomChecker())) {
+        if (!failed(context, resultWrapper, context.getCustomFailureChecker())) {
             resultWrapper.setSuccess(true);
             return false;
         }

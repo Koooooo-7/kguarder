@@ -1,7 +1,7 @@
 package top.kguarder.core.retry;
 
 import top.kguarder.core.annotation.Retry;
-import top.kguarder.core.component.FailureCustomChecker;
+import top.kguarder.core.component.CustomFailureChecker;
 import lombok.Builder;
 import lombok.Data;
 
@@ -27,7 +27,7 @@ public class RetryContext {
 
     private Retry.DelayStrategy delayStrategy;
 
-    private FailureCustomChecker failureCustomChecker;
+    private CustomFailureChecker customFailureChecker;
 
     private RetryManager retryManager;
 

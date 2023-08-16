@@ -1,0 +1,42 @@
+package top.kguarder.core.tests.customfailurechecker;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import top.kguarder.core.configuration.GuarderConfiguration;
+import top.kguarder.core.tests.simple.MockSimpleCallService;
+import top.kguarder.core.tests.simple.fallbacker.MockSimpleFallbacker;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@SpringBootTest(classes = {GuarderConfiguration.class, KGuarderCustomFailureMethodTests.MockServicesConfiguration.class})
+public class KGuarderCustomFailureMethodTests {
+
+    @SpyBean
+    private MockCustomFailureCallService mockCustomFailureCallService;
+
+    @SpyBean
+    private MockCustomFailureChecker mockCustomFailureChecker;
+
+    @Test
+    void shouldReturnResultWhenGetSuccessCode() {
+        final var actual = mockCustomFailureCallService.returnSimpleCall();
+        Assertions.assertEquals(200, actual);
+        verify(mockCustomFailureCallService, times(2)).returnSimpleCall();
+        verify(mockCustomFailureChecker, times(2)).failed(any());
+    }
+
+    public static class MockServicesConfiguration {
+        @Bean("mockCustomFailureChecker")
+        public MockCustomFailureChecker mockCustomFailureChecker() {
+            return new MockCustomFailureChecker();
+        }
+    }
+}
