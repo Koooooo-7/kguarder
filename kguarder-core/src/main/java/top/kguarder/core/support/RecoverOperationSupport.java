@@ -6,7 +6,7 @@ import top.kguarder.core.advisor.GuarderMethodInvokerContext;
 import top.kguarder.core.annotation.Recover;
 import top.kguarder.core.annotation.Guarder;
 import top.kguarder.core.annotation.Retry;
-import top.kguarder.core.component.CustomFailureChecker;
+import top.kguarder.core.retry.CustomFailureChecker;
 import top.kguarder.core.exception.GuarderThrowableWrapper;
 import top.kguarder.core.recover.Fallbacker;
 import top.kguarder.core.recover.RecoverContext;

@@ -1,6 +1,6 @@
 package top.kguarder.core.tests.customfailurechecker;
 
-import top.kguarder.core.component.CustomFailureChecker;
+import top.kguarder.core.retry.CustomFailureChecker;
 import top.kguarder.core.support.ResultWrapper;
 
 import java.util.Optional;

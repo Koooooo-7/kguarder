@@ -1,7 +1,6 @@
 package top.kguarder.core.retry;
 
 import top.kguarder.core.annotation.Retry;
-import top.kguarder.core.component.CustomFailureChecker;
 import lombok.Builder;
 import lombok.Data;
 

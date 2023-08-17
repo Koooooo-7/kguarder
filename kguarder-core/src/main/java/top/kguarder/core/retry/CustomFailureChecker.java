@@ -1,4 +1,4 @@
-package top.kguarder.core.component;
+package top.kguarder.core.retry;
 
 import top.kguarder.core.support.ResultWrapper;
 

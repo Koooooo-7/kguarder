@@ -1,7 +1,8 @@
 package top.kguarder.core.annotation;
 
+import top.kguarder.core.retry.CustomFailureChecker;
+
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -35,7 +36,7 @@ public @interface Guarder {
      * identify the method result on business failed, i.e.
      * A return result with failed with bizResultCode=50000 in payload after calling other service
      *
-     * @return the bean name which is the instance of {@link  top.kguarder.core.component.CustomFailureChecker }
+     * @return the bean name which is the instance of {@link  CustomFailureChecker }
      */
 
     String failureCustomChecker() default "";
