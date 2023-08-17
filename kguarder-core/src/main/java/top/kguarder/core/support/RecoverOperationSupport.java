@@ -32,7 +32,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
     private RetryManager defaultRetryManager;
 
-    public Object doInvoke(GuarderMethodInvokerContext guarderMethodInvokerContext) throws Throwable {
+    protected Object doInvoke(GuarderMethodInvokerContext guarderMethodInvokerContext) throws Throwable {
 
         ResultWrapper resultWrapper =
                 doRun(guarderMethodInvokerContext, this.guarderContext.getTimeout(), this.guarderContext.getTimeoutUnit());
@@ -50,7 +50,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
     }
 
-    public void parserGuarderContext(Method target) {
+    protected void parserGuarderContext(Method target) {
         final Guarder guarder = target.getAnnotation(Guarder.class);
         final Retry retry = guarder.retry();
 
@@ -113,7 +113,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         return BeanFactoryAnnotationUtils.qualifiedBeanOfType(this.beanFactory, expectedType, beanName);
     }
 
-    public ResultWrapper doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, ResultWrapper firstCallResult) throws Throwable {
+    protected ResultWrapper doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, ResultWrapper firstCallResult) throws Throwable {
         final RetryContext retryContext = this.guarderContext.getRetryContext();
         final RetryManager retryManager = retryContext.getRetryManager();
 
@@ -130,7 +130,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
     }
 
-    public ResultWrapper doRecover(ResultWrapper resultWrapper) {
+    protected ResultWrapper doRecover(ResultWrapper resultWrapper) {
         final RecoverContext recoverContext = this.guarderContext.getRecoverContext();
         final Object fallback = recoverContext.getFallback().fallback(resultWrapper);
 
@@ -140,7 +140,7 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         return recoveredResult;
     }
 
-    public ResultWrapper doRun(GuarderMethodInvokerContext guarderMethodInvokerContext, long timeout, TimeUnit timeUnit) {
+    protected ResultWrapper doRun(GuarderMethodInvokerContext guarderMethodInvokerContext, long timeout, TimeUnit timeUnit) {
         final GuarderMethodInvoker methodInvoker = guarderMethodInvokerContext.getGuarderMethodInvoker();
         ResultWrapper resultWrapper = new ResultWrapper();
         // straight run
