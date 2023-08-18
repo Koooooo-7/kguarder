@@ -1,4 +1,4 @@
-package top.kguarder.core.tests.customfailurechecker;
+package top.kguarder.core.spring.customfailurechecker;
 
 import top.kguarder.core.annotation.Guarder;
 import top.kguarder.core.annotation.Retry;

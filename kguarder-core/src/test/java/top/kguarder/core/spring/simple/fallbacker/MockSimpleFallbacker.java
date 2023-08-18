@@ -1,4 +1,4 @@
-package top.kguarder.core.tests.simple.fallbacker;
+package top.kguarder.core.spring.simple.fallbacker;
 
 import top.kguarder.core.exception.GuarderThrowableWrapper;
 import top.kguarder.core.recover.Fallbacker;

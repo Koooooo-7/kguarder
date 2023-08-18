@@ -1,4 +1,4 @@
-package top.kguarder.core.tests.simple;
+package top.kguarder.core.spring.simple;
 
 import top.kguarder.core.annotation.Guarder;
 import top.kguarder.core.annotation.Recover;

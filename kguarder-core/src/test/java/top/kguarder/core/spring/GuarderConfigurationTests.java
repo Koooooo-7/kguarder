@@ -1,4 +1,4 @@
-package top.kguarder.core.tests;
+package top.kguarder.core.spring;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

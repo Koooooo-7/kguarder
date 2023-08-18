@@ -1,4 +1,4 @@
-package top.kguarder.core.tests.customfailurechecker;
+package top.kguarder.core.spring.customfailurechecker;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -6,13 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import top.kguarder.core.configuration.GuarderConfiguration;
-import top.kguarder.core.tests.simple.MockSimpleCallService;
-import top.kguarder.core.tests.simple.fallbacker.MockSimpleFallbacker;
-
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

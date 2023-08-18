@@ -1,4 +1,4 @@
-package top.kguarder.core.tests.customfailurechecker;
+package top.kguarder.core.spring.customfailurechecker;
 
 import top.kguarder.core.retry.CustomFailureChecker;
 import top.kguarder.core.support.ResultWrapper;
