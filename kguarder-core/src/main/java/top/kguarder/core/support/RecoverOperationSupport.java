@@ -21,7 +21,6 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Method;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public abstract class RecoverOperationSupport implements BeanFactoryAware {
     private static final CustomFailureChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (ResultWrapper resultWrapper) -> false;
@@ -36,6 +35,11 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
         ResultWrapper resultWrapper =
                 doRun(guarderMethodInvokerContext, this.guarderContext.getTimeout(), this.guarderContext.getTimeoutUnit());
+
+        if (resultWrapper.isSuccess()) {
+            return resultWrapper.getFinalResult();
+        }
+
         // do retry?
         if (this.guarderContext.tryRetry()) {
             resultWrapper = doRetry(guarderMethodInvokerContext, resultWrapper);
@@ -161,11 +165,8 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
             resultWrapper.setResult(result);
         } catch (GuarderThrowableWrapper e) {
             resultWrapper.setThrowableWrapper(e);
-        } catch (TimeoutException e) {
+        } catch (Throwable e) {
             resultWrapper.setThrowableWrapper(new GuarderThrowableWrapper(e, guarderMethodInvokerContext.getOriginalMethodInvoker()));
-        } catch (Exception e) {
-            // error out of biz scope
-            throw new RuntimeException(e);
         }
         return resultWrapper;
     }
