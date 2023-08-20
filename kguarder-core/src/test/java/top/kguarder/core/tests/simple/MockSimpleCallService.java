@@ -3,6 +3,7 @@ package top.kguarder.core.tests.simple;
 import top.kguarder.core.annotation.Guarder;
 import top.kguarder.core.annotation.Recover;
 import top.kguarder.core.annotation.Retry;
+import top.kguarder.core.tests.simple.fallbacker.MyFoo;
 
 public class MockSimpleCallService {
 
@@ -83,6 +84,20 @@ public class MockSimpleCallService {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    @Guarder(
+            timeout = 2L,
+            failureCustomChecker = "mockCustomEntityFailureChecker",
+            retry = @Retry(
+                    retryTimes = 2
+            ),
+            recover = @Recover(
+                    fallback = "mockSimpleEntityFallbacker"
+            )
+    )
+    public MyFoo returnSimpleEntityCall() {
+        return new MyFoo(400L, "bad resp");
     }
 
 }

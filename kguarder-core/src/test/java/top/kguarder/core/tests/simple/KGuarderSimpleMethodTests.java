@@ -6,13 +6,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import top.kguarder.core.configuration.GuarderConfiguration;
+import top.kguarder.core.tests.customfailurechecker.MockCustomEntityFailureChecker;
+import top.kguarder.core.tests.simple.fallbacker.MockSimpleEntityFallbacker;
 import top.kguarder.core.tests.simple.fallbacker.MockSimpleFallbacker;
 
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,6 +26,12 @@ public class KGuarderSimpleMethodTests {
 
     @SpyBean
     private MockSimpleFallbacker mockSimpleFallbacker;
+
+    @SpyBean
+    private MockSimpleEntityFallbacker mockSimpleEntityFallbacker;
+
+    @SpyBean
+    private MockCustomEntityFailureChecker mockCustomEntityFailureChecker;
 
     @Test
     void shouldReturnResult() {
@@ -69,10 +76,30 @@ public class KGuarderSimpleMethodTests {
         verify(mockSimpleFallbacker, only()).fallback(any());
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    void shouldReturn200ResultWhenRecoverTheResult() {
+        final var actual = mockSimpleCallService.returnSimpleEntityCall();
+        Assertions.assertEquals(200L, actual.getCode());
+        verify(mockSimpleCallService, times(3)).returnSimpleEntityCall();
+        verify(mockSimpleEntityFallbacker, only()).fallback(any());
+        verify(mockCustomEntityFailureChecker, times(3)).failed(any());
+    }
+
     public static class MockServicesConfiguration {
         @Bean("mockSimpleFallbacker")
         public MockSimpleFallbacker mockSimpleFallbacker() {
             return new MockSimpleFallbacker();
+        }
+
+        @Bean("mockSimpleEntityFallbacker")
+        public MockSimpleEntityFallbacker mockSimpleEntityFallbacker() {
+            return new MockSimpleEntityFallbacker();
+        }
+
+        @Bean("mockCustomEntityFailureChecker")
+        public MockCustomEntityFailureChecker mockCustomEntityFailureChecker() {
+            return new MockCustomEntityFailureChecker();
         }
     }
 }
