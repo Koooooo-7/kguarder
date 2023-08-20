@@ -1,8 +1,8 @@
 package top.kguarder.core.recover;
 
-import top.kguarder.core.support.ResultWrapper;
+import top.kguarder.core.support.Result;
 
 @FunctionalInterface
 public interface Fallbacker {
-    Object fallback(ResultWrapper resultWrapper);
+    Object fallback(Result guardedResult);
 }

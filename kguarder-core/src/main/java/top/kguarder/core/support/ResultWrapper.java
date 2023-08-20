@@ -1,38 +1,27 @@
 package top.kguarder.core.support;
 
-import top.kguarder.core.exception.GuarderThrowableWrapper;
-import top.kguarder.core.exception.GuarderException;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.aopalliance.intercept.MethodInvocation;
 
 import java.util.Optional;
 
-@Data
-public class ResultWrapper {
+@RequiredArgsConstructor
+public class ResultWrapper implements Result {
 
-    private boolean success;
+    private final GuardedResult delegate;
 
-    private Object result;
-
-    private GuarderThrowableWrapper throwableWrapper;
-
-    @SuppressWarnings("unchecked")
-    public <T> Optional<T> getResult() {
-        return Optional.ofNullable((T) result);
+    @Override
+    public <T> Optional<T> get() {
+        return delegate.get();
     }
 
-    protected Object getFinalResult() {
-        if (isFailed()) {
-            throw new GuarderException("Guarder handle method finished, it is still failed, result is [" + getResult().orElse("") + "]",
-                    throwableWrapper.getOriginal());
-        }
-        return result;
+    @Override
+    public MethodInvocation getTarget() {
+        return delegate.getTarget();
     }
 
-    public GuarderThrowableWrapper getThrowableWrapper() {
-        return throwableWrapper;
-    }
-
-    public boolean isFailed() {
-        return !success;
+    @Override
+    public Optional<Throwable> getThrowable() {
+        return delegate.getThrowable();
     }
 }

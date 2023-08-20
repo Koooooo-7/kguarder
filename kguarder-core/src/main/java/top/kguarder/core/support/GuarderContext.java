@@ -17,7 +17,7 @@ public class GuarderContext {
 
     private TimeUnit timeoutUnit;
 
-    private ResultWrapper result;
+    private GuardedResult result;
 
     private RetryContext retryContext;
 

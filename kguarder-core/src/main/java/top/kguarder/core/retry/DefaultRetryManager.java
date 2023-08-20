@@ -2,8 +2,9 @@ package top.kguarder.core.retry;
 
 import top.kguarder.core.annotation.Retry;
 import top.kguarder.core.exception.GuarderThrowableWrapper;
-import top.kguarder.core.support.ResultWrapper;
+import top.kguarder.core.support.GuardedResult;
 import top.kguarder.core.exception.GuarderException;
+import top.kguarder.core.support.ResultWrapper;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -11,17 +12,18 @@ import java.util.concurrent.TimeUnit;
 
 public class DefaultRetryManager implements RetryManager {
 
-    public boolean failed(RetryContext context, ResultWrapper resultWrapper, CustomFailureChecker customFailureChecker) throws Throwable {
+    public boolean failed(RetryContext context, GuardedResult guardedResult, CustomFailureChecker customFailureChecker) throws Throwable {
+        final ResultWrapper resultWrapper = new ResultWrapper(guardedResult);
         if (customFailureChecker.failed(resultWrapper)) {
             return true;
         }
 
-        return failed(context, resultWrapper);
+        return failed(context, guardedResult);
     }
 
     @Override
-    public boolean failed(RetryContext context, ResultWrapper resultWrapper) throws Throwable {
-        final GuarderThrowableWrapper throwableWrapper = resultWrapper.getThrowableWrapper();
+    public boolean failed(RetryContext context, GuardedResult guardedResult) throws Throwable {
+        final GuarderThrowableWrapper throwableWrapper = guardedResult.getThrowableWrapper();
         if (Objects.isNull(throwableWrapper)) {
             return false;
         }
@@ -46,9 +48,9 @@ public class DefaultRetryManager implements RetryManager {
     }
 
     @Override
-    public boolean canRetry(RetryContext context, ResultWrapper resultWrapper) throws Throwable {
-        if (!failed(context, resultWrapper, context.getCustomFailureChecker())) {
-            resultWrapper.setSuccess(true);
+    public boolean canRetry(RetryContext context, GuardedResult guardedResult) throws Throwable {
+        if (!failed(context, guardedResult, context.getCustomFailureChecker())) {
+            guardedResult.setSuccess(true);
             return false;
         }
 

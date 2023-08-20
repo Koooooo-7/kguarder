@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class RecoverOperationSupport implements BeanFactoryAware {
-    private static final CustomFailureChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (ResultWrapper resultWrapper) -> false;
+    private static final CustomFailureChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (Result guardedResult) -> false;
     private ThreadPoolTaskExecutor guarderExecutor;
     public GuarderContext guarderContext;
 
@@ -33,24 +33,24 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
 
     protected Object doInvoke(GuarderMethodInvokerContext guarderMethodInvokerContext) throws Throwable {
 
-        ResultWrapper resultWrapper =
+        GuardedResult guardedResult =
                 doRun(guarderMethodInvokerContext, this.guarderContext.getTimeout(), this.guarderContext.getTimeoutUnit());
 
-        if (resultWrapper.isSuccess()) {
-            return resultWrapper.getFinalResult();
+        if (guardedResult.isSuccess()) {
+            return guardedResult.getFinalResult();
         }
 
         // do retry?
         if (this.guarderContext.tryRetry()) {
-            resultWrapper = doRetry(guarderMethodInvokerContext, resultWrapper);
+            guardedResult = doRetry(guarderMethodInvokerContext, guardedResult);
         }
 
         // do recover?
-        if (resultWrapper.isFailed() && this.guarderContext.tryRecover()) {
-            resultWrapper = doRecover(resultWrapper);
+        if (guardedResult.isFailed() && this.guarderContext.tryRecover()) {
+            guardedResult = doRecover(guardedResult);
         }
         // final result
-        return resultWrapper.getFinalResult();
+        return guardedResult.getFinalResult();
 
     }
 
@@ -117,58 +117,60 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         return BeanFactoryAnnotationUtils.qualifiedBeanOfType(this.beanFactory, expectedType, beanName);
     }
 
-    protected ResultWrapper doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, ResultWrapper firstCallResult) throws Throwable {
+    protected GuardedResult doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, GuardedResult firstCallResult) throws Throwable {
         final RetryContext retryContext = this.guarderContext.getRetryContext();
         final RetryManager retryManager = retryContext.getRetryManager();
 
-        ResultWrapper resultWrapper = firstCallResult;
+        GuardedResult guardedResult = firstCallResult;
 
-        while (retryManager.canRetry(retryContext, resultWrapper)) {
+        while (retryManager.canRetry(retryContext, guardedResult)) {
             try {
-                resultWrapper = doRun(guarderMethodInvokerContext, retryContext.getTimeout(), retryContext.getTimeoutUnit());
+                guardedResult = doRun(guarderMethodInvokerContext, retryContext.getTimeout(), retryContext.getTimeoutUnit());
             } finally {
                 retryContext.incRetryTimes();
             }
         }
-        return resultWrapper;
+        return guardedResult;
 
     }
 
-    protected ResultWrapper doRecover(ResultWrapper resultWrapper) {
+    protected GuardedResult doRecover(GuardedResult guardedResult) {
         final RecoverContext recoverContext = this.guarderContext.getRecoverContext();
-        final Object fallback = recoverContext.getFallback().fallback(resultWrapper);
+        final Object fallback = recoverContext.getFallback().fallback(new ResultWrapper(guardedResult));
 
-        ResultWrapper recoveredResult = new ResultWrapper();
+        GuardedResult recoveredResult = new GuardedResult();
         recoveredResult.setSuccess(true);
+        recoveredResult.setMethodInvocation(guardedResult.getMethodInvocation());
         recoveredResult.setResult(fallback);
         return recoveredResult;
     }
 
-    protected ResultWrapper doRun(GuarderMethodInvokerContext guarderMethodInvokerContext, long timeout, TimeUnit timeUnit) {
+    protected GuardedResult doRun(GuarderMethodInvokerContext guarderMethodInvokerContext, long timeout, TimeUnit timeUnit) {
         final GuarderMethodInvoker methodInvoker = guarderMethodInvokerContext.getGuarderMethodInvoker();
-        ResultWrapper resultWrapper = new ResultWrapper();
+        GuardedResult guardedResult = new GuardedResult();
+        guardedResult.setMethodInvocation(guarderMethodInvokerContext.getOriginalMethodInvoker());
         // straight run
         if (timeout == 0) {
             try {
                 final Object result = methodInvoker.invoke();
-                resultWrapper.setResult(result);
+                guardedResult.setResult(result);
             } catch (GuarderThrowableWrapper e) {
-                resultWrapper.setThrowableWrapper(e);
+                guardedResult.setThrowableWrapper(e);
             }
-            return resultWrapper;
+            return guardedResult;
         }
 
         // timeout
         try {
             final Future<Object> future = guarderExecutor.submit(new GuarderRunner(methodInvoker));
             final Object result = future.get(timeout, timeUnit);
-            resultWrapper.setResult(result);
+            guardedResult.setResult(result);
         } catch (GuarderThrowableWrapper e) {
-            resultWrapper.setThrowableWrapper(e);
+            guardedResult.setThrowableWrapper(e);
         } catch (Throwable e) {
-            resultWrapper.setThrowableWrapper(new GuarderThrowableWrapper(e, guarderMethodInvokerContext.getOriginalMethodInvoker()));
+            guardedResult.setThrowableWrapper(new GuarderThrowableWrapper(e, guarderMethodInvokerContext.getOriginalMethodInvoker()));
         }
-        return resultWrapper;
+        return guardedResult;
     }
 
     public void setDefaultRetryManager(RetryManager defaultRetryManager) {
