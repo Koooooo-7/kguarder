@@ -34,20 +34,20 @@ public class KGuarderSimpleMethodTests {
     private MockCustomEntityFailureChecker mockCustomEntityFailureChecker;
 
     @Test
-    void shouldReturnResult() {
+    void shouldReturnResultGivenRetryTimes3() {
         final Long actual = mockSimpleCallService.returnCall();
         Assertions.assertEquals(200L, actual);
         verify(mockSimpleCallService, times(1)).returnCall();
     }
 
     @Test
-    void shouldReturnResultEx() {
+    void shouldReturnResultExGivenExcludeAllEx() {
         Assertions.assertThrows(IllegalStateException.class, () -> mockSimpleCallService.returnCallEx());
         verify(mockSimpleCallService, times(1)).returnCallEx();
     }
 
     @Test
-    void shouldReturnResultWhenRetryOnce() {
+    void shouldReturnResultWhenRetryOnceGivenRetryTimes3() {
         final Long actual = mockSimpleCallService.returnSimpleCall();
         Assertions.assertEquals(200L, actual);
         verify(mockSimpleCallService, times(2)).returnSimpleCall();
@@ -55,7 +55,7 @@ public class KGuarderSimpleMethodTests {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldReturnFallbackResultWhenRetryFailed() {
+    void shouldReturnFallbackResultWhenRetryFailedGivenMockSimpleFallbacker() {
         final var actual = (List<String>) mockSimpleCallService.returnSimpleObjectRecoverCall();
         Assertions.assertEquals(3, actual.size());
         verify(mockSimpleCallService, times(4)).returnSimpleObjectRecoverCall();
@@ -63,13 +63,13 @@ public class KGuarderSimpleMethodTests {
     }
 
     @Test
-    void shouldThrowExceptionWhenCallMethod() {
+    void shouldThrowExceptionWhenCallMethodGivenMatchedExcludeEx() {
         Assertions.assertThrows(IllegalStateException.class, () -> mockSimpleCallService.throwExceptionMatchExcludeExCall());
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldReturnFallbackResultWhenRetryFailedSinceTimeout() {
+    void shouldReturnFallbackResultWhenRetryFailedSinceTimeoutGivenMethodCallTimeoutConfig2Sec() {
         final var actual = (List<String>) mockSimpleCallService.returnSimpleObjectRecoverCallWithTimeout();
         Assertions.assertEquals(3, actual.size());
         verify(mockSimpleCallService, times(1)).returnSimpleObjectRecoverCallWithTimeout();
@@ -78,7 +78,7 @@ public class KGuarderSimpleMethodTests {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldReturn200ResultWhenRecoverTheResult() {
+    void shouldReturn200ResultWhenRecoverTheResultGivenMockCustomEntityFailureChecker() {
         final var actual = mockSimpleCallService.returnSimpleEntityCall();
         Assertions.assertEquals(200L, actual.getCode());
         verify(mockSimpleCallService, times(3)).returnSimpleEntityCall();

@@ -21,7 +21,7 @@ public class KGuarderCustomFailureMethodTests {
     private MockCustomFailureChecker mockCustomFailureChecker;
 
     @Test
-    void shouldReturnResultWhenGetSuccessCode() {
+    void shouldReturnResultWhenGetSuccessCodeGivenMockCustomFailureChecker() {
         final var actual = mockCustomFailureCallService.returnSimpleCall();
         Assertions.assertEquals(200, actual);
         verify(mockCustomFailureCallService, times(2)).returnSimpleCall();
