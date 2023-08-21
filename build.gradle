@@ -28,8 +28,8 @@ subprojects {
         implementation "org.springframework.boot:spring-boot-starter:${SPRINGBOOT_VERSION}"
         implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
-        compileOnly 'org.projectlombok:lombok:1.18.26'
-        annotationProcessor 'org.projectlombok:lombok:1.18.26'
+        compileOnly 'org.projectlombok:lombok:1.18.28'
+        annotationProcessor 'org.projectlombok:lombok:1.18.28'
     }
 
     tasks.named('jar') {
