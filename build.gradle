@@ -33,12 +33,18 @@ subprojects {
     }
 
     tasks.named('jar') {
+        if (project.name.contains("core")){
+            archivesBaseName = 'kguarder'
+        }
         manifest {
             attributes(
-                    'Implementation-Title': project.name,
-                    'Implementation-Version': project.version,
+                    'Project': PROJECT_GROUP,
+                    'Project-Version': project.version,
+                    'Module-Name': project.name,
                     'Built-Tool': "Gradle ${gradle.gradleVersion}",
                     'Build-Jdk': "${System.properties['java.version']}",
+                    'Author': 'Koy Zhuang',
+                    'License': 'MIT',
             )
         }
     }
