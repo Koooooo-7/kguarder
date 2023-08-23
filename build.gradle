@@ -54,8 +54,13 @@ subprojects {
             mavenJava(MavenPublication) {
                 from components.java
                 pom {
+                    if (project.name.contains("core")){
+                        artifactId = 'kguarder'
+                    }else {
+                        artifactId = project.name
+                    }
+
                     groupId = PROJECT_GROUP
-                    artifactId = project.name
                     version = PROJECT_VERSION
                     name = project.name
                     description = 'A method based guarder for error-handling.'
