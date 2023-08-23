@@ -48,6 +48,9 @@ subprojects {
             mavenJava(MavenPublication) {
                 from components.java
                 pom {
+                    groupId = PROJECT_GROUP
+                    artifactId = project.name
+                    version = PROJECT_VERSION
                     name = project.name
                     description = 'A method based guarder for error-handling.'
                     url = 'https://github.com/koooooo-7/kguarder'
