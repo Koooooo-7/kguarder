@@ -3,7 +3,13 @@
 > :guardsman: A method based guarder for error-handling.
 
 Lite and simple make things easier.
+
 This project provides a declarative error-handling way based on method for SpringBoot applications.
+
+- Method call cost time limitation
+- Retry support
+- Recovery support
+- Custom method failure check
 
 ## Quick Start
 
