@@ -11,10 +11,10 @@ public class GuarderProperties {
 
     /**
      * Normally this should be after some annotations behavior sucjh as @Transaction, @Cacheable.
-     * By default the Order is {@value org.springframework.core.Ordered#LOWEST_PRECEDENCE -1}
-     * adviceOrderAdjust, the adviceOrderAdjust +/- based on {@value org.springframework.core.Ordered#LOWEST_PRECEDENCE -1}
+     * By default the Order is {@value org.springframework.core.Ordered#LOWEST_PRECEDENCE +1}
+     * adviceOrderAdjust, the adviceOrderAdjust - based on {@value org.springframework.core.Ordered#LOWEST_PRECEDENCE}
      */
-    private int adviceOrderAdjust = -1;
+    private int adviceOrderAdjust = 0;
 
     @NestedConfigurationProperty
     private ExecutorProperties executor = new ExecutorProperties();

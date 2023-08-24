@@ -37,7 +37,7 @@ public class GuardedResult implements Result {
 
     protected Object getFinalResult() {
         if (isFailed()) {
-            throw new GuarderException("Guarder handle method finished, it is still failed, result is [" + get().orElse("") + "]",
+            throw new GuarderException("Guarder handle method finished, it is still failed, result is [" + get().orElse("") + "], throwable details: ",
                     throwableWrapper.getOriginal());
         }
         return result;

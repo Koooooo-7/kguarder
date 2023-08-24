@@ -70,6 +70,7 @@ public class GuarderConfiguration {
         guarderExecutor.initialize();
         return guarderExecutor;
     }
+
     @Bean
     @ConditionalOnMissingBean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
@@ -77,7 +78,6 @@ public class GuarderConfiguration {
         defaultAdvisorAutoProxyCreator.setProxyTargetClass(true);
         return defaultAdvisorAutoProxyCreator;
     }
-
 
 
 }
