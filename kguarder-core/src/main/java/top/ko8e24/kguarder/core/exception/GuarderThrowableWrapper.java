@@ -5,7 +5,7 @@ import org.aopalliance.intercept.MethodInvocation;
 
 public class GuarderThrowableWrapper extends RuntimeException {
 
-    private MethodInvocation invocation;
+    private final MethodInvocation invocation;
     private final Throwable original;
 
     public GuarderThrowableWrapper(Throwable original, MethodInvocation invocation) {

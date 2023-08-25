@@ -87,17 +87,18 @@ public class KGuarderDemoApplication {
 
 ## Reminder
 
-Since this is based on `SpringAOP`, it has the same limitation like `@Transactional` or `@Cacheable`.
-The `Order` of `@Guarder` is `org.springframework.core.Ordered#LOWEST_PRECEDENCE-1`, which is higher priority than `@Transaction` by default.
-We should keep transaction more close to method ideally.
+Since it bases on `SpringAOP` support, which has the same limitation like `@Transactional` or `@Cacheable`.
+The `Order` of `@Guarder` is `org.springframework.core.Ordered#LOWEST_PRECEDENCE-1` by default, which is higher priority than `@Transaction`.
+Ideally, We should keep transaction more close to method.
 
-Recommend to use `@Guarder` without other SpringAOP Annotations on same method together to avoid and potential `advice order` issue.
-Make the method level sort instead of advices is better.
+Recommend to use `@Guarder` without other SpringAOP Annotations on same method together to avoid any potential `advice order` issue.
+Make the sort on method construct level instead of advices is better.
 
 FYI, Those `@Enable**` configs are works as well, if you understand what I mean.
 
 - `@EnableAspectJAutoProxy(exposeProxy = true)`
 - `@EnableTransactionManagement(order = 1)`
+- `...`
 
 ## Build Project
 
