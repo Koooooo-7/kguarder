@@ -61,15 +61,13 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    artifacts {
-        archives javadocJar, sourcesJar
-    }
-
-
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
+
+                artifact tasks.sourcesJar
+                artifact tasks.javadocJar
                 pom {
                     if (project.name.contains("core")) {
                         artifactId = 'kguarder'
@@ -79,7 +77,11 @@ subprojects {
 
                     groupId = PROJECT_GROUP
                     version = PROJECT_VERSION
-                    name = project.name
+                    if (project.name.contains("core")) {
+                        name = 'kguarder'
+                    } else {
+                        name = project.name
+                    }
                     description = 'A method based guarder for error-handling.'
                     url = 'https://github.com/koooooo-7/kguarder'
 
@@ -107,9 +109,10 @@ subprojects {
             }
         }
         repositories {
+            mavenLocal()
             maven {
-                def releasesRepoUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
-                def snapshotsRepoUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+                def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+                def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots'
                 url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
                 credentials {
@@ -121,13 +124,11 @@ subprojects {
 
 
             }
-
-            mavenLocal()
         }
     }
 
     signing {
-        sign publishing.publications.mavenJava
+        sign publishing.publications
     }
 
     test {
