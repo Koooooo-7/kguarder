@@ -31,7 +31,7 @@ This project provides a declarative error-handling way based on method for Sprin
 ```
 
 ```gradle
-implementation 'top.ko8e24.kguarder:kguarder:0.0.1}'
+implementation 'top.ko8e24.kguarder:kguarder:0.0.1'
 ```
 
 ### Enable `kguarder`.
@@ -94,7 +94,7 @@ Ideally, We should keep transaction more close to method.
 Recommend to use `@Guarder` without other SpringAOP Annotations on same method together to avoid any potential `advice order` issue.
 Make the sort on method construct level instead of advices is better.
 
-FYI, Those `@Enable**` configs are works as well, if you understand what I mean.
+FYI, those `@Enable**` configs are works as well, if you know what I mean.
 
 - `@EnableAspectJAutoProxy(exposeProxy = true)`
 - `@EnableTransactionManagement(order = 1)`
