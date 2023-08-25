@@ -21,17 +21,17 @@ This project provides a declarative error-handling way based on method for Sprin
 
 ### Import Dependency
 
-> Current ${latest-version} :  `0.0.1-SNAPSHOT`.
+> Current ${latest-version} :  `0.0.1`.
 ```pom
     <dependency>
         <groupId>top.ko8e24</groupId>
         <artifactId>kguarder</artifactId>
-        <version>${latest-version}</version>
+        <version>0.0.1</version>
     </dependency>
 ```
 
 ```gradle
-implementation 'top.ko8e24.kguarder:kguarder:${latest-version}'
+implementation 'top.ko8e24.kguarder:kguarder:0.0.1}'
 ```
 
 ### Enable `kguarder`.
