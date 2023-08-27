@@ -11,7 +11,13 @@ buildscript {
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'jacoco'
     apply plugin: 'signing'
+
+    jacoco {
+        // ignore lombok generated
+        toolVersion = "0.8.9"
+    }
 
 
     group = PROJECT_GROUP
@@ -134,5 +140,14 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled true
+        }
+    }
+
+    check.dependsOn jacocoTestReport
 
 }
