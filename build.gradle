@@ -14,6 +14,11 @@ subprojects {
     apply plugin: 'jacoco'
     apply plugin: 'signing'
 
+    jacoco {
+        // ignore lombok generated
+        toolVersion = "0.8.9"
+    }
+
 
     group = PROJECT_GROUP
     version = PROJECT_VERSION
