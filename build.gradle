@@ -11,6 +11,7 @@ buildscript {
 subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'jacoco'
     apply plugin: 'signing'
 
 
@@ -134,5 +135,14 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled true
+            html.enabled true
+        }
+    }
+
+    check.dependsOn jacocoTestReport
 
 }
