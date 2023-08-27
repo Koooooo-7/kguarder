@@ -2,6 +2,16 @@
 
 > :guardsman: *A method based guarder for error-handling.*
 
+
+<p align="center">
+    <img src="https://github.com/Koooooo-7/kguarder/actions/workflows/ci.yml/badge.svg"/>
+&nbsp;
+&nbsp;
+<a href="https://codecov.io/gh/Koooooo-7/kguarder" rel="nofollow">
+    <img src="https://codecov.io/gh/Koooooo-7/kguarder/graph/badge.svg?token=2EL1HG9J6B"/> 
+</a>
+</p>
+
 Lite and simple make things easier and handy, lives in SpringBoot.
 Working in normal method calls, api calls and transaction operations.
 
