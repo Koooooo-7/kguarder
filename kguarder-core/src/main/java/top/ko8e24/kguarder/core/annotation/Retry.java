@@ -38,7 +38,7 @@ public @interface Retry {
         })),
 
         MULTIPLIER((delay, delayTimeUnit, totalRetryTimes, currentRetryTimes) -> {
-            return delayTimeUnit.toMillis((long) (delay * Math.max(1, currentRetryTimes * 0.6)));
+            return delayTimeUnit.toMillis(delay * currentRetryTimes);
         }),
 
         RANDOM((delay, delayTimeUnit, totalRetryTimes, currentRetryTimes) -> {
