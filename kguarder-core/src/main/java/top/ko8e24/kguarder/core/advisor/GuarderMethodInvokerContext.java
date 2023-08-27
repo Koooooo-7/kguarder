@@ -1,19 +1,21 @@
 package top.ko8e24.kguarder.core.advisor;
 
+import org.aopalliance.intercept.MethodInvocation;
+
 public class GuarderMethodInvokerContext {
     private final GuarderMethodInvoker guarderMethodInvoker;
     private final GuarderMethodInvoker.MethodInvocationWrapper originalMethodInvoker;
 
-    public GuarderMethodInvokerContext(GuarderMethodInvoker guarderMethodInvoker, GuarderMethodInvoker.MethodInvocationWrapper originalMethodInvoker) {
+    public GuarderMethodInvokerContext(GuarderMethodInvoker guarderMethodInvoker, MethodInvocation originalMethodInvoker) {
         this.guarderMethodInvoker = guarderMethodInvoker;
-        this.originalMethodInvoker = originalMethodInvoker;
+        this.originalMethodInvoker = new GuarderMethodInvoker.MethodInvocationWrapper(originalMethodInvoker);
     }
 
     public GuarderMethodInvoker getGuarderMethodInvoker() {
         return guarderMethodInvoker;
     }
 
-    public GuarderMethodInvoker.MethodInvocationWrapper getOriginalMethodInvoker() {
+    public MethodInvocation getOriginalMethodInvoker() {
         return originalMethodInvoker;
     }
 
@@ -24,10 +26,10 @@ public class GuarderMethodInvokerContext {
 
     @FunctionalInterface
     public interface OriginalMethodInvokerSetter {
-        GuarderMethodInvokerContext methodInvoker(GuarderMethodInvoker.MethodInvocationWrapper invoker);
+        GuarderMethodInvokerContext methodInvoker(MethodInvocation invoker);
     }
 
     public static GuarderMethodInvokerSetter newCtx() {
-        return guarderMethodInvoker -> methodInvocationWrapper -> new GuarderMethodInvokerContext(guarderMethodInvoker, methodInvocationWrapper);
+        return guarderMethodInvoker -> methodInvocation -> new GuarderMethodInvokerContext(guarderMethodInvoker, methodInvocation);
     }
 }

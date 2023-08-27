@@ -15,7 +15,7 @@ public class GuardedResult implements Result {
 
     private Object result;
 
-    private GuarderMethodInvoker.MethodInvocationWrapper methodInvocation;
+    private MethodInvocation methodInvocation;
 
     private GuarderThrowableWrapper throwableWrapper;
 

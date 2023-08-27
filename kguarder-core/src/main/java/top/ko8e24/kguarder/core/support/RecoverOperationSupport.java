@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class RecoverOperationSupport implements BeanFactoryAware {
-    private static final CustomFailureChecker EMPTY_CUSTOM_RESULT_FAILURE_CHECKER = (Result guardedResult) -> false;
+    private static final CustomFailureChecker DEFAULT_CUSTOM_RESULT_FAILURE_CHECKER = (Result guardedResult) -> false;
     private ThreadPoolTaskExecutor guarderExecutor;
     public GuarderContext guarderContext;
 
@@ -67,19 +67,16 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         this.guarderContext.setTimeoutUnit(guarder.timeoutUnit());
 
         if (retry.retryTimes() > 0) {
-            CustomFailureChecker customFailureChecker = EMPTY_CUSTOM_RESULT_FAILURE_CHECKER;
-            if (StringUtils.isNotEmpty(guarder.failureCustomChecker())) {
-                customFailureChecker = getBean(guarder.failureCustomChecker(), CustomFailureChecker.class);
-            }
 
             RetryManager retryManager = defaultRetryManager;
+            CustomFailureChecker customFailureChecker = DEFAULT_CUSTOM_RESULT_FAILURE_CHECKER;
 
             if (StringUtils.isNotEmpty(guarder.failureCustomChecker())) {
                 customFailureChecker = getBean(guarder.failureCustomChecker(), CustomFailureChecker.class);
             }
 
-            if (StringUtils.isNotEmpty(guarder.retry().retryManager())) {
-                retryManager = getBean(guarder.retry().retryManager(), RetryManager.class);
+            if (StringUtils.isNotEmpty(retry.retryManager())) {
+                retryManager = getBean(retry.retryManager(), RetryManager.class);
             }
 
             final RetryContext retryContext = RetryContext.builder()
@@ -117,11 +114,11 @@ public abstract class RecoverOperationSupport implements BeanFactoryAware {
         return BeanFactoryAnnotationUtils.qualifiedBeanOfType(this.beanFactory, expectedType, beanName);
     }
 
-    protected GuardedResult doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, GuardedResult firstCallResult) throws Throwable {
+    protected GuardedResult doRetry(GuarderMethodInvokerContext guarderMethodInvokerContext, GuardedResult lastRetryResult) throws Throwable {
         final RetryContext retryContext = this.guarderContext.getRetryContext();
         final RetryManager retryManager = retryContext.getRetryManager();
 
-        GuardedResult guardedResult = firstCallResult;
+        GuardedResult guardedResult = lastRetryResult;
 
         while (retryManager.canRetry(retryContext, guardedResult)) {
             try {
