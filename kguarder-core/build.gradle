@@ -2,5 +2,5 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${SPRINGBOOT_VERSION}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${SPRINGBOOT_VERSION}"
     testImplementation "org.springframework.boot:spring-boot-starter-data-jpa:${SPRINGBOOT_VERSION}"
-    testImplementation 'org.hsqldb:hsqldb:2.7.2'
+    testImplementation 'org.hsqldb:hsqldb:2.7.3'
 }
